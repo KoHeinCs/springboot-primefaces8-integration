@@ -1,0 +1,1016 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+                template="/common/masterLayout.xhtml">
+    <ui:param name="header" value="Offline Biller"/>
+    <ui:param name="headerRendered" value="true"/>
+    <ui:define name="content">
+        <f:event type="preRenderComponent" listener="#{manageOfflineBiller.initialize}"></f:event>
+        <style>
+            .nrc {
+                padding: 4px 0px !important;
+            }
+
+            /* Target all input elements with the readonly attribute set to true */
+            input[readonly] {
+                background: rgba(0, 0, 0, 0.15) !important;
+            }
+        </style>
+
+        <h:form id="offlineBillerEntiryForm">
+
+
+            <p:growl id="growl" showDetail="true" sticky="true"/>
+
+            <p:wizard flowListener="#{manageOfflineBiller.onFlowProcess}" widgetVar="wiz">
+
+                <!-- Billers -->
+                <p:tab id="billers" title="Billers">
+                    <p:panel header="Billers" id="billersWizardPanel" style="min-height:270px;">
+
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                                     styleClass="ui-panelgrid-blank ui-fluid">
+
+                            <p:panelGrid id="billersLeftPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="billerTemplateId" display="text"/>
+                                <h:outputLabel value="Biller Template ID" styleClass="input-label mandatory"/>
+                                <p:inputText id="billerTemplateId" required="true"
+                                             requiredMessage="Enter valid biller template id"
+                                             value="#{manageOfflineBiller.billers.billerTemplateID}">
+                                    <p:ajax event="blur"
+                                            listener="#{manageOfflineBiller.updateTargetValueBasedOnBillerTemplate}"
+                                            update="backendAggregator,merchantCode,aggregator,offlineBillerEntiryForm:growl"/>
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="name" display="text"/>
+                                <h:outputLabel value="Name" styleClass="input-label mandatory"/>
+                                <p:inputText id="name" required="true" requiredMessage="Enter valid biller name"
+                                             value="#{manageOfflineBiller.billers.name}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="backendAggregator" display="text"/>
+                                <h:outputLabel value="Backend Aggregator" styleClass="input-label"/>
+                                <p:inputText id="backendAggregator" readonly="true"
+                                             value="#{manageOfflineBiller.billers.backendAggregator}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="merchantCode" display="text"/>
+                                <h:outputLabel value="Merchant Code" styleClass="input-label"/>
+                                <p:inputText id="merchantCode" readonly="true"
+                                             value="#{manageOfflineBiller.billers.merchantCode}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="aggregator" display="text"/>
+                                <h:outputLabel value="Aggregator" styleClass="input-label"/>
+                                <p:inputText id="aggregator" readonly="true"
+                                             value="#{manageOfflineBiller.billers.aggregator}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="type" display="text"/>
+                                <h:outputLabel value="Type"/>
+                                <p:inputText id="type"
+                                             value="#{manageOfflineBiller.billers.type}" readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="billerCategory" display="text"/>
+                                <h:outputText styleClass="input-label mandatory" value="Biller Category"/>
+                                <p:selectOneMenu id="billerCategory" requiredMessage="Enter valid category"
+                                                 required="true" filter="true"
+                                                 value="#{manageOfflineBiller.billers.billerCategory}">
+                                    <f:selectItem itemLabel="Select Category" itemValue=""/>
+                                    <f:selectItems value="#{manageOfflineBiller.billerCategories}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel/>
+                                <p:message for="billLogo" display="text"/>
+                                <h:outputLabel value="Bill Logo" styleClass="input-label mandatory"/>
+                                <p:inputText id="billLogo" required="true" requiredMessage="Enter valid bill logo"
+                                             value="#{manageOfflineBiller.billers.billLogo}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="categoryLogo" display="text"/>
+                                <h:outputLabel value="Category Logo" styleClass="input-label mandatory"/>
+                                <p:inputText id="categoryLogo" required="true"
+                                             requiredMessage="Enter valid category logo"
+                                             value="#{manageOfflineBiller.billers.categoryLogo}"/>
+
+
+                            </p:panelGrid>
+
+                            <p:panelGrid id="billersRightPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="apiIndicator" display="text"/>
+                                <h:outputLabel value="API Indicator"/>
+                                <p:inputText id="apiIndicator" value="#{manageOfflineBiller.billers.apiIndicator}"
+                                             readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="sendCharge" display="text"/>
+                                <h:outputLabel value="Send Charge"/>
+                                <p:inputText id="sendCharge" value="#{manageOfflineBiller.billers.sendCharge}"
+                                             readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="isCustomerNumberRequired" display="text"/>
+                                <h:outputLabel value="Is CustomerNumber Required"/>
+                                <p:inputText id="isCustomerNumberRequired"
+                                             value="#{manageOfflineBiller.billers.isCustomerNumberRequired}"
+                                             readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="isBillReferenceRequired" display="text"/>
+                                <h:outputLabel value="Is BillReference Required"/>
+                                <p:inputText id="isBillReferenceRequired"
+                                             value="#{manageOfflineBiller.billers.isBillReferenceRequired}"
+                                             readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="offset" display="text"/>
+                                <h:outputLabel value="Offset"/>
+                                <p:inputText id="offset" value="#{manageOfflineBiller.billers.offset}" readonly="true"/>
+
+                                <p:outputLabel/>
+                                <p:message for="step" display="text"/>
+                                <h:outputLabel value="Step"/>
+                                <p:inputText id="step" value="#{manageOfflineBiller.billers.step}" readonly="true"/>
+
+                            </p:panelGrid>
+
+                        </p:panelGrid>
+
+
+                    </p:panel>
+                </p:tab>
+
+                <!-- Fields -->
+                <p:tab id="fields" title="Fields">
+                    <p:panel header="Fields" id="fieldsWizardPanel" style="min-height:270px;">
+
+                        <p:fieldset legend="Field Details" style="margin-bottom:20px">
+                            <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4"
+                                         layout="grid"
+                                         styleClass="ui-panelgrid-blank ui-fluid">
+                                <p:panelGrid id="fieldsInfoLeftPanel" columns="2"
+                                             columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                    <p:outputLabel/>
+                                    <p:message for="selectedFieldType" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory" value="Field Type"/>
+                                    <p:selectOneRadio readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                      required="#{request.getParameter('validateFieldDetail')}"
+                                                      requiredMessage="Field Type ?"
+                                                      id="selectedFieldType"
+                                                      value="#{manageOfflineBiller.fieldDetailDTO.inputType.type}">
+                                        <f:selectItem itemLabel="Text" itemValue="text"/>
+                                        <f:selectItem itemLabel="Number" itemValue="number"/>
+                                        <p:ajax event="valueChange" update="fieldsInfoLeftPanel"
+                                                listener="#{manageOfflineBiller.changeFieldDetailFieldTypeEvent}"/>
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel/>
+                                    <p:message for="labelName" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory"
+                                                  rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                                  value="Label Name"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                 id="labelName"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 requiredMessage="Enter a label name"
+                                                 rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                                 maxlength="50"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.label}">
+                                    </p:inputText>
+
+                                    <p:outputLabel/>
+                                    <p:message for="key" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory" value="Key Name"
+                                                  rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}" id="key"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 requiredMessage="Enter a key name" maxlength="50"
+                                                 rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.key}">
+                                    </p:inputText>
+
+                                    <p:outputLabel/>
+                                    <p:message for="androidDigits" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory"
+                                                  rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type == 'number'}"
+                                                  value="Android Digits"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                 id="androidDigits"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type == 'number'}"
+                                                 maxlength="50"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.inputType.androidDigits}">
+                                    </p:inputText>
+
+                                </p:panelGrid>
+                                <p:panelGrid id="fieldsInfoMidPanel" columns="2"
+                                             columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                    <p:outputLabel/>
+                                    <p:message for="isOptional" display="text"/>
+                                    <h:outputLabel value="Is Mandatory Field ?" styleClass="input-label mandatory"/>
+                                    <p:selectOneRadio required="#{request.getParameter('validateFieldDetail')}"
+                                                      requiredMessage="Is Mandatory Field ?"
+                                                      id="isOptional"
+                                                      readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                      value="#{manageOfflineBiller.fieldDetailDTO.isMandatory}">
+                                        <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                        <p:ajax event="valueChange" update="fieldsInfoMidPanel"
+                                                listener="#{manageOfflineBiller.changeFieldDetailOptionalEvent}"/>
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel/>
+                                    <p:message for="validationRegex" display="text"/>
+                                    <h:outputText rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                                  styleClass="input-label mandatory" value="Validation Regex"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                 rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                                 id="validationRegex"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 requiredMessage="Enter a validation regre"
+                                                 maxlength="50"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.validationRegex}">
+                                    </p:inputText>
+
+                                    <p:outputLabel/>
+                                    <p:message for="validationErrorMessage" display="text"/>
+                                    <h:outputText rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                                  styleClass="input-label mandatory" value="Validation Error Message"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                 rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                                 id="validationErrorMessage"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 requiredMessage="Enter a validation error message"
+                                                 maxlength="50"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.validationErrorMessage}">
+                                    </p:inputText>
+
+                                </p:panelGrid>
+                                <p:panelGrid id="fieldsInfoRightPanel" columns="2"
+                                             columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                             layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                    <p:outputLabel/>
+                                    <p:message for="showInSuccess" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory" value="Show In Success"/>
+                                    <p:selectOneRadio readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}"
+                                                      required="#{request.getParameter('validateFieldDetail')}"
+                                                      requiredMessage="Show in success ?"
+                                                      id="showInSuccess"
+                                                      value="#{manageOfflineBiller.fieldDetailDTO.showInSuccess}">
+                                        <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                                        <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel/>
+                                    <p:message for="hint" display="text"/>
+                                    <h:outputText styleClass="input-label mandatory" value="Hint"/>
+                                    <p:inputText readonly="#{!manageOfflineBiller.createNewFieldDetailInfo}" id="hint"
+                                                 required="#{request.getParameter('validateFieldDetail')}"
+                                                 requiredMessage="Enter a hint"
+                                                 maxlength="50"
+                                                 value="#{manageOfflineBiller.fieldDetailDTO.hint}">
+                                    </p:inputText>
+
+                                </p:panelGrid>
+                            </p:panelGrid>
+                            <p:separator/>
+                            <p:commandButton rendered="#{manageOfflineBiller.createNewFieldDetailInfo}"
+                                             action="#{manageOfflineBiller.saveFieldsInfo()}"
+                                             id="saveBtn"
+                                             update="fieldsInfoLeftPanel,fieldsInfoMidPanel,fieldsInfoRightPanel,billerFieldDetailTable"
+                                             style="width: 80px;margin-left:20px;"
+                                             value="Add">
+                                <f:param name="validateFieldDetail" value="true"/>
+                            </p:commandButton>
+                        </p:fieldset>
+
+                        <p:fieldset legend="Field List" style="margin-bottom:20px">
+                            <p:message for="billerFieldDetailTable" display="text"/>
+                            <p:dataTable id="billerFieldDetailTable" style="width:100%"
+                                         value="#{manageOfflineBiller.fieldDetailDTOList}"
+                                         var="fieldDetail">
+
+                                <f:facet name="header">
+                                    List of Fields
+                                </f:facet>
+
+                                <p:column headerText="Label Name">
+                                    <h:outputText value="#{fieldDetail.label}"/>
+                                </p:column>
+
+                                <p:column headerText="key Name">
+                                    <h:outputText value="#{fieldDetail.key}"/>
+                                </p:column>
+
+                                <p:column headerText="Field Type">
+                                    <h:outputText value="#{fieldDetail.inputType.type}"/>
+                                </p:column>
+
+                                <p:column headerText="Show In Success">
+                                    <h:outputText value="#{fieldDetail.showInSuccess}"/>
+                                </p:column>
+
+                                <p:column headerText="Validation (Regex)">
+                                    <h:outputText value="#{fieldDetail.validationRegex}"/>
+                                </p:column>
+
+                                <p:column headerText="Validation Message">
+                                    <h:outputText value="#{fieldDetail.validationErrorMessage}"/>
+                                </p:column>
+
+                                <p:column headerText="View" style="width:5%;text-align : center;">
+                                    <p:commandButton styleClass="green-button"
+                                                     icon="pi pi-eye"
+                                                     action="#{manageOfflineBiller.viewFieldDetailInfo(fieldDetail)}"
+                                                     id="editFieldDetail"
+                                                     immediate="true"
+                                                     oncomplete="PF('fieldsInfoEntryDialog').show();"
+                                                     update=":fieldsInfoEntryForm"/>
+                                </p:column>
+
+                                <p:column headerText="Delete" style="width:5%;text-align : center;">
+                                    <p:commandButton styleClass="red-button"
+                                                     icon="pi pi-trash"
+                                                     action="#{manageOfflineBiller.removeFieldDetailInfo(fieldDetail)}"
+                                                     update="billerFieldDetailTable"
+                                                     id="removeFieldDetail">
+                                        <p:confirm header="Confirmation"
+                                                   message="Are you sure to delete?"
+                                                   icon="fa fa-exclamation-triangle"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:fieldset>
+
+                    </p:panel>
+                </p:tab>
+
+                <!-- Biller-Configuration -->
+                <p:tab id="billerConfiguration" title="Biller Configuration">
+                    <p:panel header="Biller Configuration" id="billerConfigWizardPanel" style="min-height:270px;">
+
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                                     styleClass="ui-panelgrid-blank ui-fluid">
+
+                            <p:panelGrid id="billerConfigLeftPanel" columns="2"
+                                         columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="billerName" display="text"/>
+                                <h:outputLabel value="Biller Name" styleClass="input-label"/>
+                                <p:inputText id="billerName" readonly="true"
+                                             value="#{manageOfflineBiller.billerConfig.billerName}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="confirmID" display="text"/>
+                                <h:outputLabel value="Confirm" styleClass="input-label"/>
+                                <p:inputText id="confirmID" readonly="true"
+                                             value="#{manageOfflineBiller.billerConfig.confirm}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="emailRequired" display="text"/>
+                                <h:outputLabel value="Email Required" styleClass="input-label mandatory"/>
+                                <p:selectOneRadio required="true" requiredMessage="Email required ?" id="emailRequired"
+                                                  value="#{manageOfflineBiller.billerConfig.emailRequired}">
+                                    <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                                    <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                    <p:ajax event="valueChange"
+                                            listener="#{manageOfflineBiller.changeEmailRequiredEvent}"/>
+                                </p:selectOneRadio>
+
+
+                            </p:panelGrid>
+
+                            <p:panelGrid id="billerConfigRightPanel" columns="2"
+                                         columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="chargeCode" display="text"/>
+                                <h:outputLabel value="Charge Code" styleClass="input-label"/>
+                                <p:inputText id="chargeCode" readonly="true"
+                                             value="#{manageOfflineBiller.billerConfig.chargeCode}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="protocol" display="text"/>
+                                <h:outputLabel value="Protocol" styleClass="input-label"/>
+                                <p:inputText id="protocol" readonly="true"
+                                             value="#{manageOfflineBiller.billerConfig.protocol}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="host" display="text"/>
+                                <h:outputLabel value="Host" styleClass="input-label"/>
+                                <p:inputText id="host" readonly="true"
+                                             value="#{manageOfflineBiller.url.host}"/>
+
+                                <p:outputLabel/>
+                                <p:message for="port" display="text"/>
+                                <h:outputLabel value="Port" styleClass="input-label"/>
+                                <p:inputText id="port" readonly="true"
+                                             value="#{manageOfflineBiller.url.port}"/>
+
+                            </p:panelGrid>
+
+                        </p:panelGrid>
+                    </p:panel>
+                </p:tab>
+
+                <!-- Product -->
+                <p:tab id="product" title="Product">
+                    <p:panel header="Product" id="productWizardPanel" style="min-height:270px;">
+
+                        <table>
+                            <tr>
+                                <td align="left" colspan="3" width="100%">
+                                    <p:message for="productTablePanel" display="text"/>
+                                    <h:panelGroup id="productTablePanel" style="width:100%">
+                                        <fieldset style="width: 98%">
+                                            <legend>
+                                                <table>
+                                                    <tr>
+                                                        <td>
+                                                            <p:commandButton
+                                                                    styleClass="ui-priority-primary"
+                                                                    value="Create"
+                                                                    action="#{manageOfflineBiller.prepareAddNewProductInfo}"
+                                                                    id="productCreateBtnId"
+                                                                    oncomplete="PF('productInfoEntryDialog').show();"
+                                                                    update=":productInfoEntryForm">
+                                                            </p:commandButton>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </legend>
+                                            <p:message for="productDTOTable" display="text"/>
+                                            <p:dataTable id="productDTOTable" style="width:100%"
+                                                         value="#{manageOfflineBiller.productDTOList}"
+                                                         var="productDTO">
+
+                                                <f:facet name="header">
+                                                    List of Accounts
+                                                </f:facet>
+
+                                                <p:column headerText="Account Type">
+                                                    <h:outputText value="#{productDTO.productAcctType}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Reversal">
+                                                    <h:outputText value="#{productDTO.productReversal}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Service Code">
+                                                    <h:outputText value="#{productDTO.serviceCode}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Product Name">
+                                                    <h:outputText value="#{productDTO.productName}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Fees">
+                                                    <h:outputText value="#{productDTO.fees}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Fee Type">
+                                                    <h:outputText value="#{productDTO.feeType}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Income Account">
+                                                    <h:outputText value="#{productDTO.incomeAccount}"/>
+                                                </p:column>
+
+                                                <p:column headerText="Collection Account">
+                                                    <h:outputText value="#{productDTO.collectionAccount}"/>
+                                                </p:column>
+
+                                                <p:column headerText="View" style="width:5%;text-align : center;">
+                                                    <p:commandButton styleClass="green-button"
+                                                                     icon="pi pi-eye"
+                                                                     action="#{manageOfflineBiller.viewProductInfo(productDTO)}"
+                                                                     id="editProductInfoLink"
+                                                                     oncomplete="PF('productInfoEntryDialog').show();"
+                                                                     update=":productInfoEntryForm"/>
+                                                </p:column>
+                                                <p:column headerText="Delete" style="width:5%;text-align : center;">
+                                                    <p:commandButton styleClass="red-button"
+                                                                     icon="pi pi-trash"
+                                                                     action="#{manageOfflineBiller.removeProductInfo(productDTO)}"
+                                                                     id="removeEditInsuredPersonInfoLink"
+                                                                     update=":offlineBillerEntiryForm:productTablePanel">
+                                                        <p:confirm header="Confirmation"
+                                                                   message="Are you sure to delete ? "
+                                                                   icon="pi pi-exclamation-triangle"/>
+                                                    </p:commandButton>
+                                                </p:column>
+
+
+                                            </p:dataTable>
+                                        </fieldset>
+                                    </h:panelGroup>
+                                </td>
+                            </tr>
+                        </table>
+                    </p:panel>
+                </p:tab>
+
+                <!-- Biller-Product -->
+                <p:tab id="billerProduct" title="Biller Product">
+                    <p:panel header="Biller Product" id="billerProductWizardPanel" style="min-height:270px;">
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                                     styleClass="ui-panelgrid-blank ui-fluid">
+
+                            <p:panelGrid id="billerProductLeftPanel" columns="2"
+                                         columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="feesPaidBy" display="text"/>
+                                <h:outputText styleClass="input-label mandatory" value="Fee Paid By"/>
+                                <p:selectOneMenu id="feesPaidBy" required="true"
+                                                 requiredMessage="Enter valid fee paid by"
+                                                 value="#{manageOfflineBiller.billerProductDTO.feesPaidBy}">
+                                    <f:selectItem itemLabel="Select one" itemValue=""/>
+                                    <f:selectItem itemLabel="Customer" itemValue="customer"/>
+                                    <f:selectItem itemLabel="Biller" itemValue="biller"/>
+                                    <f:selectItem itemLabel="Shared" itemValue="shared"/>
+                                    <p:ajax event="valueChange" listener="#{manageOfflineBiller.changeFeePaidByEvent}"
+                                            update="billerProductLeftPanel"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel/>
+                                <p:message for="feesByBiller" display="text"/>
+                                <h:outputLabel value="Fees By Biller" styleClass="input-label mandatory"
+                                               rendered="#{!(manageOfflineBiller.billerProductDTO.feesPaidBy eq 'customer')}"/>
+                                <p:inputNumber id="feesByBiller" required="true" minValue="0"
+                                               requiredMessage="Enter valid fees by biller amount"
+                                               rendered="#{!(manageOfflineBiller.billerProductDTO.feesPaidBy eq 'customer')}"
+                                               value="#{manageOfflineBiller.billerProductDTO.feesByBiller}">
+                                </p:inputNumber>
+
+                                <p:outputLabel/>
+                                <p:message for="feesByYomaBank" display="text"/>
+                                <h:outputLabel value="Fees By Yoma Bank" styleClass="input-label mandatory"
+                                               rendered="#{!(manageOfflineBiller.billerProductDTO.feesPaidBy eq 'customer')}"/>
+                                <p:inputNumber id="feesByYomaBank" required="true" minValue="0"
+                                               rendered="#{!(manageOfflineBiller.billerProductDTO.feesPaidBy eq 'customer')}"
+                                               requiredMessage="Enter valid fees by yoma bank amount"
+                                               value="#{manageOfflineBiller.billerProductDTO.feesByYomaBank}">
+                                </p:inputNumber>
+
+                                <p:outputLabel/>
+                                <p:message for="feesByCustomer" display="text"/>
+                                <h:outputLabel value="Fees By Customer" styleClass="input-label mandatory"/>
+                                <p:inputNumber id="feesByCustomer" required="true" minValue="0"
+                                               requiredMessage="Enter valid fees by customer amount"
+                                               value="#{manageOfflineBiller.billerProductDTO.feesByCustomer}">
+                                </p:inputNumber>
+
+                                <p:outputLabel/>
+                                <p:message for="isFeeShared" display="text"/>
+                                <h:outputText styleClass="input-label mandatory" value="Is fees shared"/>
+                                <p:selectOneRadio required="true" requiredMessage="Is fees shared ?"
+                                                  id="isFeeShared"
+                                                  value="#{manageOfflineBiller.billerProductDTO.isFeesShared}">
+                                    <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                                    <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                                </p:selectOneRadio>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid id="billerProductRightPanel" columns="2"
+                                         columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="billerTemplateID" display="text"/>
+                                <h:outputLabel value="Biller Template ID" styleClass="input-label"/>
+                                <p:inputText id="billerTemplateID" readonly="true"
+                                             value="#{manageOfflineBiller.billerProductDTO.billerTemplateID}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="YBCommission" display="text"/>
+                                <h:outputLabel value="Commission To Yoma" styleClass="input-label mandatory"/>
+                                <p:inputNumber id="YBCommission" minValue="0" required="true"
+                                               requiredMessage="Enter a valid commission to Yoma"
+                                               value="#{manageOfflineBiller.billerProductDTO.YBCommission}">
+                                </p:inputNumber>
+
+                                <p:outputLabel/>
+                                <p:message for="billerCommission" display="text"/>
+                                <h:outputLabel value="Commission To Biller" styleClass="input-label mandatory"/>
+                                <p:inputNumber id="billerCommission" minValue="0" required="true"
+                                               requiredMessage="Enter a valid commission to Biller"
+                                               value="#{manageOfflineBiller.billerProductDTO.billerCommission}">
+                                </p:inputNumber>
+
+                            </p:panelGrid>
+
+                        </p:panelGrid>
+                    </p:panel>
+                </p:tab>
+
+                <p:tab id="confirm" title="Confirmation">
+                    <p:panel header="Confirmation" id="confirmPanel" style="min-height:270px;">
+
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                                     styleClass="ui-panelgrid-blank ui-fluid">
+
+                            <p:panelGrid id="confirmLeftPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+                                <p:outputLabel/>
+                                <p:message for="templateId" display="text"/>
+                                <h:outputLabel value="Biller Template ID" styleClass="input-label"/>
+                                <p:inputText id="templateId" readonly="true"
+                                             value="#{manageOfflineBiller.billers.billerTemplateID}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="typeID" display="text"/>
+                                <h:outputLabel value="Biller Type" styleClass="input-label"/>
+                                <p:inputText id="typeID" readonly="true"
+                                             value="#{manageOfflineBiller.billers.type}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="categoryID" display="text"/>
+                                <h:outputLabel value="Biller Category" styleClass="input-label"/>
+                                <p:inputText id="categoryID" readonly="true"
+                                             value="#{manageOfflineBiller.billers.billerCategory}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="emailRequiredID" display="text"/>
+                                <h:outputLabel value="Email Required" styleClass="input-label"/>
+                                <p:inputText id="emailRequiredID" readonly="true"
+                                             value="#{manageOfflineBiller.billerConfig.emailRequired}">
+                                </p:inputText>
+
+                            </p:panelGrid>
+
+                            <p:panelGrid id="confirmRightPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-6"
+                                         layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                                <p:outputLabel/>
+                                <p:message for="feeTypeID" display="text"/>
+                                <h:outputLabel value="Fee Type" styleClass="input-label"/>
+                                <p:inputText id="feeTypeID" readonly="true"
+                                             value="#{manageOfflineBiller.getFirstLegacyWithoutReversal().feeType}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="feesID" display="text"/>
+                                <h:outputLabel value="Fees" styleClass="input-label"/>
+                                <p:inputText id="feesID" readonly="true"
+                                             value="#{manageOfflineBiller.getFirstLegacyWithoutReversal().fees}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="incomeAcctID" display="text"/>
+                                <h:outputLabel value="Income Account" styleClass="input-label"/>
+                                <p:inputText id="incomeAcctID" readonly="true"
+                                             value="#{manageOfflineBiller.getFirstLegacyWithoutReversal().incomeAccount}">
+                                </p:inputText>
+
+                                <p:outputLabel/>
+                                <p:message for="collectionAcctID" display="text"/>
+                                <h:outputLabel value="Collection Account" styleClass="input-label"/>
+                                <p:inputText id="collectionAcctID" readonly="true"
+                                             value="#{manageOfflineBiller.getFirstLegacyWithoutReversal().collectionAccount}">
+                                </p:inputText>
+
+                            </p:panelGrid>
+
+                        </p:panelGrid>
+                        <p:separator/>
+                        <p:commandButton value="Submit" action="#{manageOfflineBiller.addNewBiller}" update="growl"
+                                         process="@this">
+                            <p:confirm header="Confirmation"
+                                       message="Are you sure to save ? This cannot be undone !"
+                                       icon="fa fa-exclamation-triangle"/>
+                        </p:commandButton>
+                    </p:panel>
+                </p:tab>
+            </p:wizard>
+
+            <!-- Page Cofngirm -->
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+
+        </h:form>
+
+
+        <!-- Field Detail Dialog -->
+        <p:dialog appendTo="@(body)" dynamic="true" closable="true" header="Fields" hideEffect="explode"
+                  id="fieldsInfoEntryDialog" modal="true" resizable="false" showEffect="explode"
+                  visible="#{facesContext.validationFailed}" widgetVar="fieldsInfoEntryDialog"
+                  width="950" height="450"  closeOnEscape="true">
+            <p:ajax event="close"  listener="#{manageOfflineBiller.handleFieldDialogClose}"/>
+            <h:form id="fieldsInfoEntryForm">
+
+                <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4" layout="grid"
+                             styleClass="ui-panelgrid-blank ui-fluid">
+
+                    <p:panelGrid id="infoLeftPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <p:outputLabel/>
+                        <p:message for="selectedFieldType2" display="text"/>
+                        <h:outputText styleClass="input-label mandatory" value="Field Type"/>
+                        <p:selectOneRadio
+                                readonly="true"
+                                id="selectedFieldType2"
+                                value="#{manageOfflineBiller.fieldDetailDTO.inputType.type}">
+                            <f:selectItem itemLabel="Text" itemValue="text"/>
+                            <f:selectItem itemLabel="Number" itemValue="number"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel/>
+                        <p:message for="labelName2" display="text"/>
+                        <h:outputText styleClass="input-label mandatory"
+                                      rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                      value="Label Name"/>
+                        <p:inputText readonly="true" id="labelName2"
+                                     rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                     maxlength="50"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.label}">
+                        </p:inputText>
+
+                        <p:outputLabel/>
+                        <p:message for="key2" display="text"/>
+                        <h:outputText styleClass="input-label mandatory" value="Key Name"
+                                      rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"/>
+                        <p:inputText id="key2"
+                                     readonly="true"
+                                     rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type != null}"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.key}">
+                        </p:inputText>
+
+                        <p:outputLabel/>
+                        <p:message for="androidDigits2" display="text"/>
+                        <h:outputText styleClass="input-label"
+                                      rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type == 'number'}"
+                                      value="Android Digits"/>
+                        <p:inputText readonly="true" id="androidDigits2"
+                                     rendered="#{manageOfflineBiller.fieldDetailDTO.inputType.type == 'number'}"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.inputType.androidDigits}">
+                        </p:inputText>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid id="infoMidPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <p:outputLabel/>
+                        <p:message for="isOptional2" display="text"/>
+                        <h:outputLabel value="Is Mandatory Field ?" styleClass="input-label mandatory"/>
+                        <p:selectOneRadio id="isOptional2"
+                                          readonly="true"
+                                          value="#{manageOfflineBiller.fieldDetailDTO.isMandatory}">
+                            <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                            <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel/>
+                        <p:message for="validationRegex2" display="text"/>
+                        <h:outputText rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                      styleClass="input-label mandatory" value="Validation Regex"/>
+                        <p:inputText readonly="true"
+                                     rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                     id="validationRegex2"
+                                     maxlength="50"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.validationRegex}">
+                        </p:inputText>
+
+                        <p:outputLabel/>
+                        <p:message for="validationErrorMessage2" display="text"/>
+                        <h:outputText rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                      styleClass="input-label mandatory" value="Validation Error Message"/>
+                        <p:inputText readonly="true"
+                                     id="validationErrorMessage2"
+                                     maxlength="50"
+                                     rendered="#{manageOfflineBiller.fieldDetailDTO.isMandatory}"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.validationErrorMessage}">
+                        </p:inputText>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid id="infoRightPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+
+                        <p:outputLabel/>
+                        <p:message for="showInSuccess2" display="text"/>
+                        <h:outputText styleClass="input-label mandatory" value="Show In Success"/>
+                        <p:selectOneRadio readonly="true"
+                                          id="showInSuccess2"
+                                          value="#{manageOfflineBiller.fieldDetailDTO.showInSuccess}">
+                            <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                            <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel/>
+                        <p:message for="hint2" display="text"/>
+                        <h:outputText styleClass="input-label mandatory" value="Hint"/>
+                        <p:inputText id="hint2"
+                                     readonly="true"
+                                     maxlength="50"
+                                     value="#{manageOfflineBiller.fieldDetailDTO.hint}">
+                        </p:inputText>
+
+                    </p:panelGrid>
+
+                </p:panelGrid>
+
+            </h:form>
+        </p:dialog>
+
+        <!-- Product Detail Dialog -->
+        <p:dialog appendTo="@(body)" dynamic="true" closable="false" header="Account" hideEffect="explode"
+                  id="productInfoEntryDialog" modal="true" resizable="false" showEffect="explode"
+                  visible="#{facesContext.validationFailed}" widgetVar="productInfoEntryDialog"
+                  width="950" height="450">
+            <h:form id="productInfoEntryForm">
+
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                             styleClass="ui-panelgrid-blank ui-fluid">
+                    <p:panelGrid id="productInfoPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-8"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <p:outputLabel/>
+                        <p:message for="accountType" display="text"/>
+                        <h:outputLabel value="Account Type" styleClass="input-label mandatory"/>
+                        <p:selectOneRadio readonly="#{!manageOfflineBiller.createProductInfo}" required="true"
+                                          requiredMessage="Account Type ?" id="accountType"
+                                          value="#{manageOfflineBiller.productDTO.productAcctType}">
+                            <f:selectItem itemLabel="Legacy" itemValue="legacy"/>
+                            <f:selectItem itemLabel="Flexi" itemValue="flexi"/>
+                            <p:ajax event="valueChange" update=":productInfoEntryForm"
+                                    listener="#{manageOfflineBiller.changeProductAccountTypeEvent}"/>
+                        </p:selectOneRadio>
+
+                        <p:outputLabel/>
+                        <p:message for="tranType" display="text"
+                                   rendered="#{manageOfflineBiller.productDTO.productAcctType != null}"/>
+                        <h:outputLabel rendered="#{manageOfflineBiller.productDTO.productAcctType != null}"
+                                       value="Is Reversal"
+                                       styleClass="input-label mandatory"/>
+                        <p:selectOneRadio readonly="#{!manageOfflineBiller.createProductInfo}"
+                                          rendered="#{manageOfflineBiller.productDTO.productAcctType != null}"
+                                          required="true"
+                                          requiredMessage="Is Reversal ?" id="tranType"
+                                          value="#{manageOfflineBiller.productDTO.productReversal}">
+                            <f:selectItem itemLabel="Yes" itemValue="#{true}"/>
+                            <f:selectItem itemLabel="No" itemValue="#{false}"/>
+                            <p:ajax event="valueChange"
+                                    listener="#{manageOfflineBiller.changeTransactionTypeEvent}"/>
+                        </p:selectOneRadio>
+
+                    </p:panelGrid>
+                </p:panelGrid>
+
+                <p:panelGrid rendered="#{manageOfflineBiller.productDTO.productReversal !=null}" columns="2"
+                             columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+                             styleClass="ui-panelgrid-blank ui-fluid">
+
+                    <p:panelGrid id="productInfoLeftPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <p:outputLabel/>
+                        <p:message for="serviceCode" display="text"/>
+                        <h:outputLabel value="Service Code" styleClass="input-label mandatory"/>
+                        <p:inputText id="serviceCode" required="true" requiredMessage="Enter service code"
+                                     value="#{manageOfflineBiller.productDTO.serviceCode}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="productName" display="text"/>
+                        <h:outputLabel value="Product Name" styleClass="input-label mandatory"/>
+                        <p:inputText id="productName" required="true"
+                                     value="#{manageOfflineBiller.productDTO.productName}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="productFeeType" display="text"/>
+                        <h:outputLabel value="Fee Type" styleClass="input-label mandatory"/>
+                        <p:selectOneMenu id="productFeeType" required="true"
+                                         readonly="#{!manageOfflineBiller.createProductInfo}"
+                                         value="#{manageOfflineBiller.productDTO.feeType}">
+                            <f:selectItem itemLabel="Fix" itemValue="fixed"/>
+                            <f:selectItem itemLabel="Percentage" itemValue="percentage"/>
+                        </p:selectOneMenu>
+
+
+                        <p:outputLabel/>
+                        <p:message for="fees" display="text"/>
+                        <h:outputLabel value="Fees" styleClass="input-label mandatory"/>
+                        <p:inputNumber id="fees" required="true" value="#{manageOfflineBiller.productDTO.fees}"
+                                       minValue="0"
+                                       readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+
+                        <p:outputLabel/>
+                        <p:message for="incomeAccount" display="text"/>
+                        <h:outputLabel value="Income Account" styleClass="input-label mandatory"/>
+                        <p:inputText id="incomeAccount" readonly="#{!manageOfflineBiller.createProductInfo}"
+                                     value="#{manageOfflineBiller.productDTO.incomeAccount}" required="true"
+                                     requiredMessage="Enter a valid income account"/>
+
+                        <p:outputLabel/>
+                        <p:message for="collectionAccount" display="text"/>
+                        <h:outputLabel value="Collection Account" styleClass="input-label mandatory"/>
+                        <p:inputText readonly="#{!manageOfflineBiller.createProductInfo}" id="collectionAccount"
+                                     value="#{manageOfflineBiller.productDTO.collectionAccount}" required="true"
+                                     requiredMessage="Enter a valid collection account"/>
+
+
+                    </p:panelGrid>
+                    <p:panelGrid id="productInfoRightPanel" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9"
+                                 layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <p:outputLabel/>
+                        <p:message for="transactionCode" display="text"/>
+                        <h:outputLabel value="Transaction Code" styleClass="input-label mandatory"/>
+                        <p:inputText id="transactionCode" required="true"
+                                     value="#{manageOfflineBiller.productDTO.transactionCode}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="transactionCodeFee" display="text"/>
+                        <h:outputLabel value="Transaction Code Fee" styleClass="input-label mandatory"/>
+                        <p:inputText id="transactionCodeFee" required="true"
+                                     value="#{manageOfflineBiller.productDTO.transactionCodeFee}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="narrative" display="text"/>
+                        <h:outputLabel value="Narrative" styleClass="input-label mandatory"/>
+                        <p:inputText id="narrative" required="true" value="#{manageOfflineBiller.productDTO.narrative}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="narrativeFee" display="text"/>
+                        <h:outputLabel value="Narrative Fee" styleClass="input-label mandatory"/>
+                        <p:inputText id="narrativeFee" required="true"
+                                     value="#{manageOfflineBiller.productDTO.narrativeFee}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="serviceName" display="text"/>
+                        <h:outputLabel value="Service Name" styleClass="input-label"/>
+                        <p:inputText id="serviceName" value="#{manageOfflineBiller.productDTO.serviceName}"
+                                     readonly="#{!manageOfflineBiller.createProductInfo}"/>
+
+                        <p:outputLabel/>
+                        <p:message for="sundryAccount" display="text"/>
+                        <h:outputLabel value="Sundry Account" styleClass="input-label mandatory"/>
+                        <p:inputText readonly="#{!manageOfflineBiller.createProductInfo}" id="sundryAccount"
+                                     value="#{manageOfflineBiller.productDTO.sundryAccount}" required="true"
+                                     requiredMessage="Enter a valid sundry account"/>
+
+                        <p:outputLabel/>
+                        <p:message for="chargesAccount" display="text"/>
+                        <h:outputLabel value="Charges Account" styleClass="input-label mandatory"/>
+                        <p:inputText readonly="#{!manageOfflineBiller.createProductInfo}" id="chargesAccount"
+                                     value="#{manageOfflineBiller.productDTO.chargesAccount}" required="true"
+                                     requiredMessage="Enter a valid charges account"/>
+
+
+                    </p:panelGrid>
+
+                </p:panelGrid>
+
+                <p:separator/>
+                <p:commandButton action="#{manageOfflineBiller.saveProductInfo()}"
+                                 rendered="#{manageOfflineBiller.createProductInfo}"
+                                 id="saveProductBtn"
+                                 style="width: 80px;margin-left:20px;"
+                                 update=":offlineBillerEntiryForm:productDTOTable :productInfoEntryForm"
+                                 value="Add"/>
+                <p:spacer width="10"/>
+                <p:commandButton immediate="true" oncomplete="PF('productInfoEntryDialog').hide();" style="width: 80px;"
+                                 value="Cancel"/>
+
+
+            </h:form>
+        </p:dialog>
+
+
+    </ui:define>
+</ui:composition>

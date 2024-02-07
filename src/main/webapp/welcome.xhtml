@@ -1,0 +1,42 @@
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets" xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+                template="/common/masterLayout.xhtml">
+    <ui:param name="header" value="Offline Biller"/>
+    <ui:param name="headerRendered" value="true"/>
+    <ui:define name="content">
+
+        <f:event type="preRenderComponent" listener="#{welcomeActionBean.checkMessage}"></f:event>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <style>
+            .centered-image {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 50vh;
+            }
+
+            .logo-image {
+                animation: spin 5s linear infinite;
+                max-width: 2000px;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+        </style>
+        <h:form id="welcomeForm">
+            <p:growl id="growl" showDetail="true" sticky="true"/>
+            <div class="centered-image">
+                <p:graphicImage value="/images/primeface.png" alt="PrimeFaces Logo" styleClass="logo-image"/>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,50 @@
+{
+  "_id": {
+    "$oid": "63f44907b85ff15737e6063d"
+  },
+  "billerName": "MPTBusiness",
+  "protocol": "GRPC",
+  "apiConfig": {
+    "headers": [],
+    "url": {
+      "host": "dev-offline-billers.dev-bill-aggregator",
+      "port": "6565"
+    }
+  },
+  "confirm": "false",
+  "emailRequired": true,
+  "billerConfig": {
+    "additionalFields": [],
+    "productInfoConfig": {
+      "serviceCode": "MPTBusiness",
+      "transactionName": "MPTBusinessBiller",
+      "transactionNameReversal": "MPTBusinessBillerReversal",
+      "transactionNameFlexi": "MPTBusinessBillerFlexi",
+      "transactionNameReversalFlexi": "MPTBusinessBillerReversalFlexi"
+    }
+  },
+  "chargeCode": "BP002",
+  "fee": "0",
+  "feeType": "fixed",
+  "partnerMailConfig": {
+    "clientName": "offline_biller",
+    "clientSecret": "offline_biller",
+    "emailTemplateId": "MPT-BUSINESS",
+    "ccAddress": "myintthu@yomabank.com,thura.soe@yomabank.com, htunlinnaung@yomabank.com, thantzin@yomabank.com, nangmineli@yomabank.com, aungmyothant@yomabank.com, shweyamin@yomabank.com, myatmyatei@yomabank.com, eimonhlaing@yomabank.com, waimyooo@yomabank.com",
+    "subject": "MPT Business",
+    "toAddress": "sheinwaiaung@yomabank.com",
+    "emailBody": {
+      "param1": "billerName",
+      "param2": "customerAccount",
+      "param3": "transactionDate",
+      "param4": "transactionReference",
+      "param5": "currency",
+      "param6": "amount",
+      "param7": "customerNo",
+      "param8": "depositorName",
+      "param9": "invoiceNo",
+      "param11": "depositorPhonenumber",
+      "param12": "branch"
+    }
+  }
+}

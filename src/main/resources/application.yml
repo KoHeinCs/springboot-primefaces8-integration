@@ -1,0 +1,8 @@
+
+mongodb:
+  primary:
+    uri: localhost:2511
+  secondary:
+    uri: localhost:2511
+server:
+  port: 8000

@@ -1,0 +1,11 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:form id="menuForm">
+		<p:menubar>
+			<p:submenu label="Management" icon="fa fa-cog">
+				<p:menuitem value="Offline Biller"   action="#{menuActionBean.openFile}"   />
+				<p:menuitem value="Online Biller" url="#"  />
+			</p:submenu>
+		</p:menubar>
+	</h:form>
+</ui:composition>

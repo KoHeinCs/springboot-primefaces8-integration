@@ -1,0 +1,18 @@
+{
+  "_id": {
+    "$oid": "63f48fc6b85ff15737e60657"
+  },
+  "serviceCode": "MPTBusiness",
+  "productName": "MPTBusinessBiller",
+  "fees": 0,
+  "feeType": "fixed",
+  "sundryAccount": "000110263501870",
+  "chargesAccount": "000110263501870",
+  "transactionCode": "CWS",
+  "transactionCodeFee": "CWS",
+  "narrative": "MPT Business Transfer",
+  "narrativeFee": "MPT Business Transfer Charge",
+  "serviceName": "",
+  "incomeAccount": "000110263501870",
+  "collectionAccount": "000110263501870"
+}
